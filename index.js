@@ -108,6 +108,23 @@ async function run() {
       res.send(result);
     });
 
+
+    app.get("/users/instructor/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+
+      if (req.decoded.email !== email) {
+        res.send({ instructor: false });
+      }
+
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+
+      const result = { instructor: user?.role === "instructor" };
+      res.send(result);
+    });
+
+
+
     app.get("/users", verifyJWT,verifyAdmin, async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
@@ -155,6 +172,8 @@ async function run() {
       const result = await enrollClassCollection.insertOne(item);
       res.send(result);
     });
+
+
     app.post("/users", async (req, res) => {
       const user = req.body;
 
@@ -165,6 +184,20 @@ async function run() {
       }
       const result = await userCollection.insertOne(user);
       res.send(result);
+    });
+
+    // check users role 
+    app.post("/checkuser-role", async (req, res) => {
+      const email = req.body?.email;
+      if (email) {
+        const query = { email: email };
+        const result = await userCollection.findOne(query);
+        if (result) {
+          res.send({ role: result?.role });
+        }
+      } else {
+        res.send({ role: null });
+      }
     });
 
     //  delete functionality
