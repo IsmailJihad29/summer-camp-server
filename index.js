@@ -167,6 +167,13 @@ async function run() {
       res.send({ token });
     });
 
+
+    app.post("/class", async(req, res) => { 
+      const classes = req.body
+      console.log('new toy', classes);
+      const result = await classCollection.insertOne(classes);
+      res.send(result)
+    })
     app.post("/carts", async (req, res) => {
       const item = req.body;
       const result = await enrollClassCollection.insertOne(item);
@@ -187,6 +194,7 @@ async function run() {
     });
 
     // check users role 
+
     app.post("/checkuser-role", async (req, res) => {
       const email = req.body?.email;
       if (email) {
@@ -207,6 +215,13 @@ async function run() {
       const result = await enrollClassCollection.deleteOne(query);
       res.send(result);
     });
+
+    app.delete("/class/:id", async (req, res) => { 
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await classCollection.deleteOne(query)
+      res.send(result)
+    })
 
     app.delete("/users/admin/:id", async (req, res) => {
       const id = req.params.id;
