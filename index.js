@@ -131,7 +131,7 @@ async function run() {
     });
 
 
-    app.get("/class", async (req, res) => {
+    app.get("/class",  async (req, res) => {
       const result = await classCollection.find().toArray();
       res.send(result);
     });
@@ -199,6 +199,36 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
+
+    app.post("/class/:id", async (req, res) => { 
+      const id = req.params.id;
+      const updateStatus = req.body.status
+      const filter = { _id: new ObjectId(id) }
+      const updetedStatus = {
+        $set: {
+          status: updateStatus
+        }
+      }
+      const result = await classCollection.updateOne(filter, updetedStatus);
+      res.send(result)
+    }) 
+
+
+    app.patch("/class/:id", async (req, res) => { 
+      const id = req.params.id;
+      const updatedClass = req.body
+      const filter = { _id: new ObjectId(id) }
+      const newClass = {
+        $set: {
+          class_name: updatedClass. class_name,
+          class_image: updatedClass.class_image,
+          price: updatedClass.price,
+          available_seat: updatedClass.available_seat,
+        }
+      }
+      const result = await classCollection.updateOne(filter, newClass, )
+      res.send(result)
+    })
 
     // check users role 
 
