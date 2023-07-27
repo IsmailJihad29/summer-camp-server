@@ -213,6 +213,19 @@ async function run() {
       res.send(result)
     }) 
 
+    app.put("/feedback/:id", async (req, res) => { 
+      const id = req.params.id;
+      const updateFeedback = req.body.feedback
+      const filter = { _id: new ObjectId(id) }
+      const feedback = {
+        $set: {
+          feedback: updateFeedback
+        }
+      }
+      const result = await classCollection.updateOne(filter, feedback);
+      res.send(result)
+    }) 
+
 
     app.patch("/class/:id", async (req, res) => { 
       const id = req.params.id;
