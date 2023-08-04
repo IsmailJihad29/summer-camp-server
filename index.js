@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
+
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -130,6 +132,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/instructor", async (req, res) => {
+      const query = { role: "instructor"  }
+      const result = await userCollection.find(query).toArray()
+        res.send(result);
+    })
+
 
     app.get("/class",  async (req, res) => {
       const result = await classCollection.find().toArray();
@@ -149,7 +157,6 @@ async function run() {
       if (!email) {
         res.send([]);
       }
-
       const decodedEmail = req.decoded.email;
       if (email !== decodedEmail) {
         return res
@@ -161,6 +168,29 @@ async function run() {
       const result = await enrollClassCollection.find(query).toArray();
       res.send(result);
     });
+
+    app.get("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await enrollClassCollection.findOne(query);
+      res.send(result);
+    });
+
+
+    app.post("/create-payment-intent", async (req, res) => { 
+
+      const {price} = req.body
+      const amount = price * 100 
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        payment_method_types: ["card"],
+      })
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
+    })
+
+
     /**
      * ----------------------------------------------------------------
      * Post Methods
