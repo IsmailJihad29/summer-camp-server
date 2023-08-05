@@ -54,8 +54,8 @@ async function run() {
     await client.connect();
 
     const classCollection = client.db("rhythmDb").collection("classes");
-    const instructorCollection = client.db("rhythmDb").collection("instructor");
     const enrollClassCollection = client.db("rhythmDb").collection("carts");
+    const paymentCollection = client.db("rhythmDb").collection("payments");
     const userCollection = client.db("rhythmDb").collection("users");
 
    
@@ -177,12 +177,12 @@ async function run() {
     });
 
 
-    app.post("/create-payment-intent", async (req, res) => { 
-
+    app.post("/create-payment-intent", verifyJWT, async (req, res) => { 
       const {price} = req.body
       const amount = price * 100 
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amount,
+        currency: "usd",
         payment_method_types: ["card"],
       })
       res.send({
@@ -190,6 +190,11 @@ async function run() {
       });
     })
 
+    app.post("/payments", async (req, res) => { 
+      const payment = req.body 
+      const result = await paymentCollection.insertOne(payment)
+      res.send(result);
+    })
 
     /**
      * ----------------------------------------------------------------
