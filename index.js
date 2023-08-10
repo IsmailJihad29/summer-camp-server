@@ -36,7 +36,8 @@ const verifyJWT = (req, res, next) => {
 //---------------------------- mongodb ------------------------------
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kz2rvmj.mongodb.net/?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kz2rvmj.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://rhythmStudio:RyAI83NR5uY7B5Gq@cluster0.kz2rvmj.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -51,7 +52,7 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
 
-    await client.connect();
+    // await client.connect();
 
     const classCollection = client.db("rhythmDb").collection("classes");
     const enrollClassCollection = client.db("rhythmDb").collection("carts");
