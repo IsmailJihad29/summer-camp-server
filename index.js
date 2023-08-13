@@ -1,16 +1,19 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-
 const app = express();
+const port = process.env.PORT || 5000;
+
 require("dotenv").config();
 const cors = require("cors");
 const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
 
-const port = process.env.PORT || 5000;
-
-app.use(cors());
-
+app.use(cors({
+  origin: 'https://64d932f3faf31947655eeccd--cute-profiterole-6adad9.netlify.app',
+  credentials:true,
+}));
 app.use(express.json());
+
+
 
 const verifyJWT = (req, res, next) => {
   const authorization = req.headers.authorization;
@@ -36,10 +39,8 @@ const verifyJWT = (req, res, next) => {
 //---------------------------- mongodb ------------------------------
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kz2rvmj.mongodb.net/?retryWrites=true&w=majority`;
-const uri = `mongodb+srv://rhythmStudio:RyAI83NR5uY7B5Gq@cluster0.kz2rvmj.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.kz2rvmj.mongodb.net/?retryWrites=true&w=majority`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -52,7 +53,7 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
 
-    await client.connect();
+    // await client.connect();
 
     const classCollection = client.db("rhythmDb").collection("classes");
     const enrollClassCollection = client.db("rhythmDb").collection("carts");
@@ -227,7 +228,7 @@ async function run() {
     }) 
 
 
-    app.put("/update-seat-enrollment/:id", verifyJWT, async (req, res) => {
+    app.put("/update-seat-enrollment/:id",  async (req, res) => {
       const id = req.params.id;
       const { available_seat, enrolled_student } = req.body;
       console.log({ id, enrolled_student, available_seat });
